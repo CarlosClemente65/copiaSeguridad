@@ -32,7 +32,7 @@ namespace copiaSeguridad
         {
             byte[] magicPacket = crearPaquete();
             envioPaquete();
-            System.Threading.Thread.Sleep(15000); // Espera 15 segundos
+            System.Threading.Thread.Sleep(35000); // Espera 15 segundos
         }
 
         public byte[] crearPaquete() //Crea el Magic Paquet para el envio del WOL

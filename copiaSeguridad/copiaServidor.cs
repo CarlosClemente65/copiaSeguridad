@@ -31,6 +31,7 @@ namespace copiaSeguridad
 
         public async Task lanzaCopia()
         {
+            Stopwatch timer = Stopwatch.StartNew();
             List<Ficheros.Fichero> listaFicheros = Ficheros.obtenerFicheros();
             foreach (var archivo in listaFicheros)
             {
@@ -71,9 +72,10 @@ namespace copiaSeguridad
                 }
             }
 
+            timer.Stop();
             string fecha = DateTime.Now.ToShortDateString();
             string hora = DateTime.Now.ToShortTimeString();
-            string controlCopia = $"Ultima copia realizada el dia {fecha} a las {hora}";
+            string controlCopia = $"Ultima copia realizada el dia {fecha} a las {hora}. Duracion de la copia: {(int)timer.Elapsed.TotalMinutes} minutos";
             File.WriteAllText(Path.Combine(destinoCopia, "copia.txt"), controlCopia);
 
         }

@@ -52,6 +52,7 @@ class Program
             Console.WriteLine("\nCopia en el USB finalizada");
             if (!string.IsNullOrEmpty(log))
             {
+                log += $"Errores de la copia realizada el {DateTime.Now.ToShortTimeString}";
                 File.WriteAllText(Path.Combine(@"u:\copias", "errores.log"), log);
                 log = string.Empty;
             }
@@ -69,10 +70,16 @@ class Program
 
             if (!string.IsNullOrEmpty(log))
             {
+                log += $"Errores de la copia realizada el {DateTime.Now.ToShortTimeString}";
                 File.WriteAllText(Path.Combine(destinoLog, "errores.log"), log);
                 log = string.Empty;
             }
             Console.WriteLine("\nCopia en el servidor finalizada. Pulsa una tecla para salir");
+            Console.ReadKey();
+        }
+        else
+        {
+            Console.WriteLine("El servidor no esta encendido, no se hara esta copia. Pulsa una tecla para salir");
             Console.ReadKey();
         }
 
