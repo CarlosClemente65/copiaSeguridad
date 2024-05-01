@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34511.84
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "copiaSeguridad", "copiaSeguridad\copiaSeguridad.csproj", "{B368F2C5-0461-45C4-8804-7D4EC068DCAF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B368F2C5-0461-45C4-8804-7D4EC068DCAF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B368F2C5-0461-45C4-8804-7D4EC068DCAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B368F2C5-0461-45C4-8804-7D4EC068DCAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B368F2C5-0461-45C4-8804-7D4EC068DCAF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {CFE12338-8039-4C7A-B1B1-1D292752B63D}
+	EndGlobalSection
+EndGlobal

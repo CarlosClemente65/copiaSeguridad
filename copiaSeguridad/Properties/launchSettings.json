@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "copiaSeguridad": {
+      "commandName": "Project",
+      "commandLineArgs": "u"
+    }
+  }
+}
