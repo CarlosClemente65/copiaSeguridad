@@ -7,25 +7,27 @@ namespace copiaSeguridad
         private string destino1 = @"\\SERVIDOR\copias_usb\";
         private string destino2 = @"\\SERVIDOR\copias_disco\";
         private String destinoCopia = string.Empty;
+        private string pathCopia1 = @"d:\copias\copiausb.txt";
+        private string pathCopia2 = @"d:\copias\copiadisco.txt";
 
         public copiaServidor()
         {
             string fecha = DateTime.Now.ToShortDateString();
             string hora = DateTime.Now.ToShortTimeString();
             string controlCopia = $"Ultima copia realizada el dia {fecha} a las {hora}";
-            if (File.Exists(@"d:\copias\copiadisco.txt"))
+            if (File.Exists(pathCopia2))
             {
                 destinoCopia = destino1;
                 Program.destinoLog = destino1;
-                File.Delete(@"d:\copias\copiadisco.txt");
-                File.WriteAllText(@"d:\copias\copiausb.txt", controlCopia);
+                File.Delete(pathCopia2);
+                File.WriteAllText(pathCopia1, controlCopia);
             }
-            else if (File.Exists(@"d:\copias\copiausb.txt"))
+            else if (File.Exists(pathCopia1))
             {
                 destinoCopia = destino2;
                 Program.destinoLog = destino2;
-                File.Delete(@"d:\copias\copiausb.txt");
-                File.WriteAllText(@"d:\copias\copiadisco.txt", controlCopia);
+                File.Delete(pathCopia1);
+                File.WriteAllText(pathCopia2, controlCopia);
             }
         }
 
@@ -75,8 +77,10 @@ namespace copiaSeguridad
             timer.Stop();
             string fecha = DateTime.Now.ToShortDateString();
             string hora = DateTime.Now.ToShortTimeString();
+            string pathLogCopia = @"d:\copias\logcopiaservidor.txt";
             string controlCopia = $"Ultima copia realizada el dia {fecha} a las {hora}. Duracion de la copia: {(int)timer.Elapsed.TotalMinutes} minutos";
             File.WriteAllText(Path.Combine(destinoCopia, "copia.txt"), controlCopia);
+            File.WriteAllText(pathLogCopia, controlCopia);
 
         }
     }

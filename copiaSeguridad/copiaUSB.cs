@@ -119,8 +119,10 @@ namespace copiaSeguridad
                 timerUsb.Stop();
                 string fecha = DateTime.Now.ToShortDateString();
                 string hora = DateTime.Now.ToShortTimeString();
+                string pathLogCopia = @"d:\copias\logcopiausb.txt";
                 string controlCopia = $"Ultima copia realizada el dia {fecha} a las {hora}. Duracion de la copia: {(int)timerUsb.Elapsed.TotalMinutes} minutos";
                 File.WriteAllText(Path.Combine(destino, "copia.txt"), controlCopia);
+                File.WriteAllText(pathLogCopia, controlCopia);
             }
             else
             {
