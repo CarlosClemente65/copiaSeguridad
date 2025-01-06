@@ -77,10 +77,9 @@ namespace copiaSeguridad
             timer.Stop();
             string fecha = DateTime.Now.ToShortDateString();
             string hora = DateTime.Now.ToShortTimeString();
-            string pathLogCopia = @"d:\copias\logcopiaservidor.txt";
             string controlCopia = $"Ultima copia realizada el dia {fecha} a las {hora}. Duracion de la copia: {(int)timer.Elapsed.TotalMinutes} minutos";
             File.WriteAllText(Path.Combine(destinoCopia, "copia.txt"), controlCopia);
-            File.WriteAllText(pathLogCopia, controlCopia);
+            File.WriteAllText(Program.logDisco, controlCopia);
 
         }
     }

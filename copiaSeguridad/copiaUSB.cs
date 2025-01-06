@@ -22,7 +22,6 @@ namespace copiaSeguridad
                         string nombre = archivo.Nombre;
                         string ruta = archivo.Ruta;
                         string rutaZip = Path.Combine(destino, $"{nombre}.zip");
-                        string rutaZipTmp = Path.Combine(Path.GetTempPath(), $"{nombre}.zip");
 
                         Console.WriteLine($"\nComprimiendo ficheros de {nombre}. Espere por favor ...");
                         Stopwatch timer = Stopwatch.StartNew();
@@ -33,76 +32,68 @@ namespace copiaSeguridad
                             {
                                 if (File.Exists(rutaZip))
                                 {
-                                    Console.WriteLine($"Abriendo fichero {rutaZip}...");
-                                    using (var zip = ZipFile.Open(rutaZip, ZipArchiveMode.Update))
-                                    {
-                                        Console.WriteLine("Leyendo ficheros a grabar...");
-                                        var archivosZip = zip.Entries.Select(entry => entry.FullName).ToList();
-                                        string[] archivosActuales = Directory.GetFiles(ruta, "*", SearchOption.AllDirectories);
+                                    //Se borra el fichero antes de hacer la copia
+                                    File.Delete(rutaZip);
 
-                                        Console.WriteLine("Actualizando ficheros...");
-                                        // Agregar nuevos archivos y actualizar los existentes
-                                        foreach (var archivoActual in archivosActuales)
-                                        {
-                                            string nombreArchivo = Path.GetFileName(archivoActual);
+                                    //Se crea el fichero directamente en el USB
+                                    CrearZip(nombre, ruta, rutaZip);
 
-                                            //Si no existe el fichero se crea
-                                            if (!archivosZip.Contains(nombreArchivo))
-                                            {
-                                                zip.CreateEntryFromFile(archivoActual, nombreArchivo);
-                                            }
-                                            else
-                                            {
-                                                //Si existe el fichero se compara la fecha de modificacion
-                                                var infoArchivo = new FileInfo(archivoActual);
-                                                var archivoZip = zip.GetEntry(nombreArchivo);
+                                    ////Este codigo abria el fichero.zip para actualizar los ficheros, pero tarda lo mismo que si se copian de forma completa. Lo dejo por si algun dia lo uso
+                                    //Console.WriteLine($"Abriendo fichero {rutaZip}...");
+                                    //using (var zip = ZipFile.Open(rutaZip, ZipArchiveMode.Update))
+                                    //{
+                                    //    Console.WriteLine("Leyendo ficheros a grabar...");
+                                    //    var archivosZip = zip.Entries.Select(entry => entry.FullName).ToList();
+                                    //    string[] archivosActuales = Directory.GetFiles(ruta, "*", SearchOption.AllDirectories);
 
-                                                if (archivoZip != null)
-                                                {
-                                                    // Obtener la fecha de modificación del archivo en el ZIP
-                                                    var fechaArchivoZip = archivoZip.LastWriteTime.DateTime;
+                                    //    Console.WriteLine("Actualizando ficheros...");
+                                    //    // Agregar nuevos archivos y actualizar los existentes
+                                    //    foreach (var archivoActual in archivosActuales)
+                                    //    {
+                                    //        string nombreArchivo = Path.GetRelativePath(ruta, archivoActual);
 
-                                                    //Si la fecha del archivo es mas reciente que en el zip, se actualiza
-                                                    if (infoArchivo.LastWriteTime.Date > fechaArchivoZip.Date)
-                                                    {
-                                                        //Se borra el fichero del zip, y se copia el actual
-                                                        archivoZip.Delete();
-                                                        zip.CreateEntryFromFile(archivoActual, nombreArchivo);
-                                                    }
-                                                }
-                                            }
-                                        }
+                                    //        //Si no existe el fichero se crea
+                                    //        if (!archivosZip.Contains(nombreArchivo))
+                                    //        {
+                                    //            zip.CreateEntryFromFile(archivoActual, nombreArchivo);
+                                    //        }
+                                    //        else
+                                    //        {
+                                    //            //Si existe el fichero se compara la fecha de modificacion
+                                    //            var infoArchivo = new FileInfo(archivoActual);
+                                    //            var archivoZip = zip.GetEntry(nombreArchivo);
 
-                                        // Eliminar archivos que ya no existen
-                                        foreach (var archivoZip in archivosZip)
-                                        {
-                                            if (!archivosActuales.Any(archivo => Path.GetFileName(archivo) == archivoZip))
-                                            {
-                                                zip.GetEntry(archivoZip)?.Delete();
-                                            }
-                                        }
-                                    }
+                                    //            if (archivoZip != null)
+                                    //            {
+                                    //                // Obtener la fecha de modificación del archivo en el ZIP
+                                    //                var fechaArchivoZip = archivoZip.LastWriteTime.DateTime;
+
+                                    //                //Si la fecha del archivo es mas reciente que en el zip, se actualiza
+                                    //                if (infoArchivo.LastWriteTime.Date > fechaArchivoZip.Date)
+                                    //                {
+                                    //                    //Se borra el fichero del zip, y se copia el actual
+                                    //                    archivoZip.Delete();
+                                    //                    zip.CreateEntryFromFile(archivoActual, nombreArchivo);
+                                    //                }
+                                    //            }
+                                    //        }
+                                    //    }
+
+                                    //    // Eliminar archivos que ya no existen
+                                    //    foreach (var archivoZip in archivosZip)
+                                    //    {
+                                    //        if (!archivosActuales.Any(archivo => Path.GetRelativePath(ruta, archivo) == archivoZip))
+                                    //        {
+                                    //            zip.GetEntry(archivoZip)?.Delete();
+                                    //        }
+                                    //    }
+                                    //}
                                 }
-                                else
-                                {
-                                    //Si no existe el fichero.zip se crea de nuevo
-                                    using (var zip = ZipFile.Open(rutaZip, ZipArchiveMode.Create))
-                                    {
-                                        string[] ficheros = Directory.GetFiles(ruta, "*", SearchOption.AllDirectories);
-
-                                        foreach (var fichero in ficheros)
-                                        {
-                                            try
-                                            {
-                                                zip.CreateEntryFromFile(fichero, Path.GetFileName(fichero));
-                                            }
-                                            catch (IOException ex)
-                                            {
-                                                Program.log += $"Error de copia en el USB del fichero {nombre}.\n\t- {ex.Message}\n";
-                                            }
-                                        }
-                                    }
-                                }
+                                //else
+                                //{
+                                //    //Si no existe el fichero.zip se crea de nuevo
+                                //    CrearZip(nombre, ruta, rutaZip);
+                                //}
                             }
                             catch (Exception ex)
                             {
@@ -119,10 +110,9 @@ namespace copiaSeguridad
                 timerUsb.Stop();
                 string fecha = DateTime.Now.ToShortDateString();
                 string hora = DateTime.Now.ToShortTimeString();
-                string pathLogCopia = @"d:\copias\logcopiausb.txt";
                 string controlCopia = $"Ultima copia realizada el dia {fecha} a las {hora}. Duracion de la copia: {(int)timerUsb.Elapsed.TotalMinutes} minutos";
                 File.WriteAllText(Path.Combine(destino, "copia.txt"), controlCopia);
-                File.WriteAllText(pathLogCopia, controlCopia);
+                File.WriteAllText(Program.logUsb, controlCopia);
             }
             else
             {
@@ -132,6 +122,26 @@ namespace copiaSeguridad
                 System.Threading.Thread.Sleep(5000);
                 Console.BackgroundColor = color;
 
+            }
+        }
+
+        private static void CrearZip(string nombre, string ruta, string rutaZip)
+        {
+            using(var zip = ZipFile.Open(rutaZip, ZipArchiveMode.Create))
+            {
+                string[] ficheros = Directory.GetFiles(ruta, "*", SearchOption.AllDirectories);
+
+                foreach(var fichero in ficheros)
+                {
+                    try
+                    {
+                        zip.CreateEntryFromFile(fichero, Path.GetRelativePath(ruta, fichero));
+                    }
+                    catch(IOException ex)
+                    {
+                        Program.log += $"Error de copia en el USB del fichero {nombre}.\n\t- {ex.Message}\n";
+                    }
+                }
             }
         }
     }
