@@ -4,30 +4,42 @@ namespace copiaSeguridad
 {
     public class copiaServidor
     {
-        private string destino1 = @"\\SERVIDOR\copias_usb\";
-        private string destino2 = @"\\SERVIDOR\copias_disco\";
-        private String destinoCopia = string.Empty;
-        private string pathCopia1 = @"d:\copias\copiausb.txt";
-        private string pathCopia2 = @"d:\copias\copiadisco.txt";
+        private string destino_usb = @"\\SERVIDOR\copias_usb\";
+        private string destino_disco = @"\\SERVIDOR\copias_disco\";
+        private string destinoCopia = string.Empty;
+        private string pathCopia_usb = @"D:\Copias\copiasSeguridad\controlCopiaUsb.txt";
+        private string pathCopia_disco = @"D:\Copias\copiasSeguridad\controlCopiaDisco.txt";
+        
+        private string fecha;
+        private string hora;
+        private string controlCopia;
+        private string ultimaCopia = string.Empty;
 
         public copiaServidor()
         {
-            string fecha = DateTime.Now.ToShortDateString();
-            string hora = DateTime.Now.ToShortTimeString();
-            string controlCopia = $"Ultima copia realizada el dia {fecha} a las {hora}";
-            if (File.Exists(pathCopia2))
+            fecha = DateTime.Now.ToShortDateString();
+            hora = DateTime.Now.ToShortTimeString();
+            controlCopia = $"Ultima copia realizada el dia {fecha} a las {hora}";
+            //Comprueba si la ultima copia se ha hecho en el disco del servidor, para hacerla en el usb
+            if(File.Exists(pathCopia_disco))
             {
-                destinoCopia = destino1;
-                Program.destinoLog = destino1;
-                File.Delete(pathCopia2);
-                File.WriteAllText(pathCopia1, controlCopia);
+                ultimaCopia = " en el usb del servidor";
+                controlCopia += ultimaCopia;
+                destinoCopia = destino_usb;
+                Program.destinoLog = destino_usb;
+                File.Delete(pathCopia_disco);
+                File.WriteAllText(pathCopia_usb, controlCopia);
             }
-            else if (File.Exists(pathCopia1))
+            else
             {
-                destinoCopia = destino2;
-                Program.destinoLog = destino2;
-                File.Delete(pathCopia1);
-                File.WriteAllText(pathCopia2, controlCopia);
+                controlCopia += " en el disco del servidor";
+                destinoCopia = destino_disco;
+                Program.destinoLog = destino_disco;
+                if(File.Exists(pathCopia_usb))
+                {
+                    File.Delete(pathCopia_usb);
+                }
+                File.WriteAllText(pathCopia_disco, controlCopia);
             }
         }
 
@@ -35,10 +47,10 @@ namespace copiaSeguridad
         {
             Stopwatch timer = Stopwatch.StartNew();
             List<Ficheros.Fichero> listaFicheros = Ficheros.obtenerFicheros();
-            foreach (var archivo in listaFicheros)
+            foreach(var archivo in listaFicheros)
             {
                 int clase = archivo.Clase;
-                if (clase == 2)
+                if(clase == 2)
                 {
                     string nombre = archivo.Nombre;
                     string origen = archivo.Ruta;
@@ -58,14 +70,14 @@ namespace copiaSeguridad
                         try
                         {
                             robocopy.Start();
-                            while (!robocopy.StandardOutput.EndOfStream)
+                            while(!robocopy.StandardOutput.EndOfStream)
                             {
                                 string linea = robocopy.StandardOutput.ReadLine();
                                 Console.WriteLine(linea);
                             }
                             robocopy.WaitForExit();
                         }
-                        catch (Exception ex)
+                        catch(Exception ex)
                         {
                             Program.log += $"Error al comprimir archivos: {ex.Message}";
                         }
@@ -75,9 +87,7 @@ namespace copiaSeguridad
             }
 
             timer.Stop();
-            string fecha = DateTime.Now.ToShortDateString();
-            string hora = DateTime.Now.ToShortTimeString();
-            string controlCopia = $"Ultima copia realizada el dia {fecha} a las {hora}. Duracion de la copia: {(int)timer.Elapsed.TotalMinutes} minutos";
+            controlCopia += $". Duracion de la copia: {(int)timer.Elapsed.TotalMinutes} minutos";
             File.WriteAllText(Path.Combine(destinoCopia, "copia.txt"), controlCopia);
             File.WriteAllText(Program.logDisco, controlCopia);
 
